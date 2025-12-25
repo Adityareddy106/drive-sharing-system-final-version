@@ -1,0 +1,324 @@
+{
+  "info": {
+    "name": "Drive Sharing System API",
+    "description": "Complete API collection for testing the Drive Sharing System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "alice",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "password123",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "file_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "share_request_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "File Operations",
+      "item": [
+        {
+          "name": "Upload File",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('file_id', jsonData.file.file_id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"file_name\": \"Project Report.pdf\",\n  \"size\": 2048000,\n  \"mime_type\": \"application/pdf\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/files/upload/",
+              "host": ["{{base_url}}"],
+              "path": ["files", "upload", ""]
+            }
+          }
+        },
+        {
+          "name": "List Files",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/files/",
+              "host": ["{{base_url}}"],
+              "path": ["files", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Share Operations",
+      "item": [
+        {
+          "name": "Initiate Forward Share",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('share_request_id', jsonData.share_request.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"file_id\": \"{{file_id}}\",\n  \"recipient_email\": \"bob@example.com\",\n  \"share_type\": \"forward\",\n  \"permission_level\": \"view\",\n  \"message\": \"Please review this document\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/share/initiate/",
+              "host": ["{{base_url}}"],
+              "path": ["share", "initiate", ""]
+            }
+          }
+        },
+        {
+          "name": "Initiate Reverse Share",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('share_request_id', jsonData.share_request.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"file_id\": \"{{file_id}}\",\n  \"recipient_email\": \"alice@example.com\",\n  \"share_type\": \"reverse\",\n  \"permission_level\": \"view\",\n  \"message\": \"I need access to this file\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/share/initiate/",
+              "host": ["{{base_url}}"],
+              "path": ["share", "initiate", ""]
+            }
+          }
+        },
+        {
+          "name": "Approve Share",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"share_request_id\": {{share_request_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/share/approve/",
+              "host": ["{{base_url}}"],
+              "path": ["share", "approve", ""]
+            }
+          }
+        },
+        {
+          "name": "Reject Share",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"share_request_id\": {{share_request_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/share/reject/",
+              "host": ["{{base_url}}"],
+              "path": ["share", "reject", ""]
+            }
+          }
+        },
+        {
+          "name": "Revoke Share",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"share_request_id\": {{share_request_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/share/revoke/",
+              "host": ["{{base_url}}"],
+              "path": ["share", "revoke", ""]
+            }
+          }
+        },
+        {
+          "name": "List Share Requests - All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/share/requests/?filter=all",
+              "host": ["{{base_url}}"],
+              "path": ["share", "requests", ""],
+              "query": [
+                {
+                  "key": "filter",
+                  "value": "all"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Share Requests - Sent",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/share/requests/?filter=sent",
+              "host": ["{{base_url}}"],
+              "path": ["share", "requests", ""],
+              "query": [
+                {
+                  "key": "filter",
+                  "value": "sent"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Share Requests - Received",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/share/requests/?filter=received",
+              "host": ["{{base_url}}"],
+              "path": ["share", "requests", ""],
+              "query": [
+                {
+                  "key": "filter",
+                  "value": "received"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit Logs",
+      "item": [
+        {
+          "name": "List All Audits",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audits/",
+              "host": ["{{base_url}}"],
+              "path": ["audits", ""]
+            }
+          }
+        },
+        {
+          "name": "List Audits - Filter by Action",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audits/?action=upload&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["audits", ""],
+              "query": [
+                {
+                  "key": "action",
+                  "value": "upload"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
